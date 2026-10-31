@@ -37,8 +37,11 @@ with tab2:
         tfile.write(uploaded_vid.read())
         cap = cv2.VideoCapture(tfile.name)
         fps = int(cap.get(cv2.CAP_PROP_FPS))
-        out_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4')
-        out = cv2.VideoWriter(out_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (int(cap.get(3)), int(cap.get(4))))
+        
+        # --- PERUBAHAN UTAMA ---
+        # Mengubah ekstensi menjadi .webm dan codec menjadi vp80 agar dikenali browser
+        out_file = tempfile.NamedTemporaryFile(delete=False, suffix='.webm')
+        out = cv2.VideoWriter(out_file.name, cv2.VideoWriter_fourcc(*'vp80'), fps, (int(cap.get(3)), int(cap.get(4))))
         
         start_time = time.time()
         frames = 0
@@ -54,5 +57,7 @@ with tab2:
         cap.release()
         out.release()
         status.empty()
-        st.video(out_file.name)
+        
+        # Tambahkan parameter format eksplisit saat menampilkan video
+        st.video(out_file.name, format="video/webm")
         st.success(f"⚡ Kecepatan Rata-rata: {frames / (time.time() - start_time):.2f} FPS")
